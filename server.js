@@ -1,8 +1,8 @@
-import express from "express";
+import express from 'express';
 const app = express();
-import dbConnection from "./data/index.js";
-import postRoutes from "./routes/posts.js";
-import  bodyParser  from 'body-parser';
+import dbConnection from './data/index.js';
+import postRoutes from './routes/posts.js';
+import bodyParser from 'body-parser';
 import { config } from 'dotenv'; // ES Modules
 
 config();
@@ -13,8 +13,8 @@ app.use(bodyParser.json());
 dbConnection;
 app.use('/posts', postRoutes);
 app.get('/', (req, res) => {
-    res.send('Welcome Home!')
+  res.send('Welcome Home!');
 });
-app.listen(port, ()=>{
-    console.log(`Server is running on port ${port}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
