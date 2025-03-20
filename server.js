@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 dbConnection;
 app.use('/posts', postRoutes);
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'restfulapi', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
