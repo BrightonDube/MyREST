@@ -6,14 +6,20 @@
     "version": "1.0.0"
   },
   "host": "myrest.onrender.com",
-  "basePath": "/posts",
+  "basePath": "/",
   "tags": [
     {
       "name": "Posts",
       "description": "Operations related to blog posts"
+    },
+    {
+      "name": "Comments",
+      "description": "Operations related to comments on blog posts"
     }
   ],
-  "schemes": ["https"],
+  "schemes": [
+    "https"
+  ],
   "paths": {
     "/": {
       "get": {
@@ -138,6 +144,138 @@
           }
         }
       }
+    },
+    "/posts/{postId}/comments": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "example": "any"
+                },
+                "author": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/comments/{commentId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -189,6 +327,57 @@
         "__v": {
           "type": "number",
           "example": 0
+        }
+      }
+    },
+    "CommentInput": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "example": "This is a comment text"
+        },
+        "author": {
+          "type": "string",
+          "example": "Comment Author Name"
+        }
+      }
+    },
+    "CommentUpdateInput": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "example": "Updated comment text (optional)"
+        },
+        "author": {
+          "type": "string",
+          "example": "Updated Author Name (optional)"
+        }
+      }
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "660..."
+        },
+        "text": {
+          "type": "string",
+          "example": "Comment Text"
+        },
+        "author": {
+          "type": "string",
+          "example": "Author Name"
+        },
+        "postId": {
+          "type": "string",
+          "example": "65f..."
+        },
+        "date": {
+          "type": "string",
+          "example": "2024-03-22T10:00:00.000Z"
         }
       }
     },

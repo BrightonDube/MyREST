@@ -2,7 +2,6 @@
 import swaggerAutogen from 'swagger-autogen';
 
 const outputFile = './swagger_output.json';
-const endpointsFiles = ['./routes/posts.js'];
 const endpointsFiles = ['./routes/posts.js', './routes/comments.js'];
 
 const doc = {
