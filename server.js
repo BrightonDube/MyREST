@@ -4,7 +4,13 @@ import bodyParser from 'body-parser';
 import dbConnection from './data/index.js';
 import postRoutes from './routes/posts.js';
 import swaggerUi from 'swagger-ui-express';
-import swaggerDocument from './swagger_output.json';
+import { createRequire } from 'module';
+
+// Create a require function for the current module's context
+const require = createRequire(import.meta.url);
+
+// Now you can use 'require' as if you were in a CommonJS module
+const swaggerDocument = require('./swagger_output.json')
 
 import { config } from 'dotenv'; // ES Modules
 import path from 'path';
