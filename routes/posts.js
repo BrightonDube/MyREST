@@ -76,7 +76,6 @@ router.get('/:postId', async (req, res) => {
   }
 });
 
-
 /**
  * PUT /posts/{postId}
  * @tags Posts
@@ -108,18 +107,18 @@ router.get('/:postId', async (req, res) => {
  * }
  */
 //PUT Update
-router.put('/:postId', validateCreatePost, async (req, res) => { 
+router.put('/:postId', validateCreatePost, async (req, res) => {
   try {
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.postId,
       {
         title: req.body.title,
-        description: req.body.description,
+        description: req.body.description
       },
-      { new: true, overwrite: true } 
+      { new: true, overwrite: true }
     );
     if (!updatedPost) {
-      return res.status(404).json({ message: 'Post not found' }); 
+      return res.status(404).json({ message: 'Post not found' });
     }
     res.json(updatedPost);
   } catch (err) {
@@ -171,7 +170,6 @@ router.patch('/:postId', validateUpdatePost, async (req, res) => {
  * @return {object} 200 - Success response
  * @return {object} 500 - Error response
  */
-// delete a post
 router.delete('/:postId', async (req, res) => {
   try {
     await Post.findByIdAndDelete(req.params.postId);
