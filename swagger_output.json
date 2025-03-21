@@ -6,7 +6,7 @@
     "version": "1.0.0"
   },
   "host": "myrest.onrender.com",
-  "basePath": "/",
+  "basePath": "/posts",
   "tags": [
     {
       "name": "Posts",
@@ -17,9 +17,7 @@
       "description": "Operations related to comments on blog posts"
     }
   ],
-  "schemes": [
-    "https"
-  ],
+  "schemes": ["https"],
   "paths": {
     "/": {
       "get": {
