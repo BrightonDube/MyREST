@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 
 import dbConnection from './data/index.js';
 import postRoutes from './routes/posts.js';
+import commentRoutes from './routes/comments.js';
 import swaggerUi from 'swagger-ui-express';
 import { createRequire } from 'module';
 
@@ -24,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 dbConnection;
 app.use('/posts', postRoutes);
+app.use('/comments', commentRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get('/', (req, res) => {
