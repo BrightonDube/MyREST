@@ -127,42 +127,6 @@ router.put('/:postId', validateCreatePost, async (req, res) => {
 });
 
 /**
- * PATCH /posts/{postId}
- * @tags Posts
- * @summary Update an existing post (PATCH - partial update)
- * @param {string} postId.path.required - ID of the post to update
- * @param {PostUpdateInput} request.body - Fields to update in the post (optional)
- * @return {Post} 200 - Success response - application/json
- * @return {object} 400 - Validation error - application/json
- * @return {object} 500 - Error response
- * @example request - example payload
- * {
- *   "title": "Partially Updated Title"
- * }
- * @example response - 400 - Validation Error
- * {
- *   "errors": [
- *     {
- *       "msg": "Title must be a string",
- *       "param": "title",
- *       "location": "body"
- *     }
- *   ]
- * }
- */
-// update a post
-router.patch('/:postId', validateUpdatePost, async (req, res) => {
-  try {
-    const post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
-      new: true
-    });
-    res.json(post);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-/**
  * DELETE /posts/{postId}
  * @tags Posts
  * @summary Delete a post by ID

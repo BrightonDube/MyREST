@@ -10,7 +10,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 // Now you can use 'require' as if you were in a CommonJS module
-const swaggerDocument = require('./swagger_output.json')
+const swaggerDocument = require('./swagger_output.json');
 
 import { config } from 'dotenv'; // ES Modules
 import path from 'path';

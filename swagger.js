@@ -10,7 +10,7 @@ const doc = {
         description: 'Documentation for my Express Post API with validation using express-validator', 
     },
     host: 'myrest.onrender.com', 
-    schemes: ['http'],       
+    schemes: ['https'],       
     tags: [                 
         {
             name: 'Posts',
