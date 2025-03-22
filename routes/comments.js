@@ -1,13 +1,11 @@
 // routes/comments.js
 import express from 'express';
 const router = express.Router();
-import Comment from '../models/Comment.js'; // Adjust path if needed
-import Post from '../models/Post.js'; // Adjust path if needed (for postId validation)
-import { validateCreateComment, validateUpdateComment } from '../middleware/commentValidations.js'; // Adjust path
-
-// Create a comment for a post
+import Comment from '../models/Comment.js';
+import Post from '../models/Post.js';
+import { validateCreateComment, validateUpdateComment } from '../middleware/commentValidations.js';
 /**
- * POST /posts/{postId}/comments
+ * POST /comments/{postId}
  * @tags Comments
  * @summary Create a new comment for a specific post
  * @param {string} postId.path.required - ID of the post to comment on
@@ -17,7 +15,7 @@ import { validateCreateComment, validateUpdateComment } from '../middleware/comm
  * @return {object} 404 - Post not found - application/json
  * @return {object} 500 - Error response
  */
-router.post('/posts/:postId/comments', validateCreateComment, async (req, res) => {
+router.post('/comments/:postId', validateCreateComment, async (req, res) => {
   try {
     const postId = req.params.postId;
     const postExists = await Post.findById(postId); // Validate if post exists
@@ -28,10 +26,10 @@ router.post('/posts/:postId/comments', validateCreateComment, async (req, res) =
     const comment = new Comment({
       text: req.body.text,
       author: req.body.author,
-      postId: postId // Associate comment with the post
+      postId: postId
     });
     const savedComment = await comment.save();
-    res.status(201).json(savedComment); // 201 Created for successful creation
+    res.status(201).json(savedComment);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -39,14 +37,14 @@ router.post('/posts/:postId/comments', validateCreateComment, async (req, res) =
 
 // Get comments for a post
 /**
- * GET /posts/{postId}/comments
+ * GET /comments/{postId}
  * @tags Comments
  * @summary Get all comments for a specific post
  * @param {string} postId.path.required - ID of the post to retrieve comments for
  * @return {array<Comment>} 200 - Success response - application/json
  * @return {object} 500 - Error response
  */
-router.get('/posts/:postId/comments', async (req, res) => {
+router.get('/comments/:postId', async (req, res) => {
   try {
     const comments = await Comment.find({ postId: req.params.postId });
     res.json(comments);
@@ -91,18 +89,17 @@ router.get('/comments/:commentId', async (req, res) => {
  */
 router.put('/comments/:commentId', validateUpdateComment, async (req, res) => {
   try {
-    const updatedComment = await Comment.findByIdAndUpdate(
-      req.params.commentId,
-      req.body,
-      { new: true, overwrite: true, runValidators: true } // runValidators to apply schema validations
-    );
+    const updatedComment = await Comment.findByIdAndUpdate(req.params.commentId, req.body, {
+      new: true,
+      overwrite: true,
+      runValidators: true
+    });
     if (!updatedComment) {
       return res.status(404).json({ message: 'Comment not found' });
     }
     res.json(updatedComment);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      // Handle validation errors from Mongoose
       return res.status(400).json({ errors: err.errors });
     }
     res.status(500).json({ message: err.message });

@@ -7,7 +7,6 @@ import commentRoutes from './routes/comments.js';
 import swaggerUi from 'swagger-ui-express';
 import { createRequire } from 'module';
 
-
 const require = createRequire(import.meta.url);
 
 const swaggerDocument = require('./swagger_output.json');
@@ -24,8 +23,8 @@ const __dirname = path.dirname(__filename);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 dbConnection;
-app.use('/posts', postRoutes);
-app.use('/comments', commentRoutes);
+app.use('/', postRoutes);
+app.use('/', commentRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get('/', (req, res) => {

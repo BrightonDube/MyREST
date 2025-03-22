@@ -9,8 +9,8 @@ const doc = {
     title: 'My Post API Documentation',
     description: 'Documentation for my Express Post API with validation using express-validator'
   },
-  host: 'myrest.onrender.com',
-  schemes: ['https'],
+  host: 'localhost:3000',
+  schemes: ['http'],
   tags: [
     {
       name: 'Posts',

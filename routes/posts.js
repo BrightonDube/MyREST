@@ -5,13 +5,13 @@ import { validateCreatePost, validateUpdatePost } from '../middleware/postValida
 
 //All posts
 /**
- * GET /posts
+ * GET /posts/
  * @tags Posts
  * @summary Get all posts
  * @return {array<Post>} 200 - Success response - application/json
  * @return {object} 500 - Error response
  */
-router.get('/', async (req, res) => {
+router.get('/posts/', async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
     res.json(posts);
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * POST /posts
+ * POST /posts/
  * @tags Posts
  * @summary Create a new post
  * @param {PostInput} request.body.required - Post object to be created
@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
  * }
  */
 // save some posts
-router.post('/', validateCreatePost, async (req, res) => {
+router.post('/posts/', validateCreatePost, async (req, res) => {
   const post = new Post({
     title: req.body.title,
     description: req.body.description
@@ -67,7 +67,7 @@ router.post('/', validateCreatePost, async (req, res) => {
  * @return {object} 500 - Error response
  */
 // get a specific post
-router.get('/:postId', async (req, res) => {
+router.get('/posts/:postId', async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
     res.send(post);
@@ -107,7 +107,7 @@ router.get('/:postId', async (req, res) => {
  * }
  */
 //PUT Update
-router.put('/:postId', validateCreatePost, async (req, res) => {
+router.put('/posts/:postId', validateCreatePost, async (req, res) => {
   try {
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.postId,
@@ -134,7 +134,7 @@ router.put('/:postId', validateCreatePost, async (req, res) => {
  * @return {object} 200 - Success response
  * @return {object} 500 - Error response
  */
-router.delete('/:postId', async (req, res) => {
+router.delete('/posts/:postId', async (req, res) => {
   try {
     await Post.findByIdAndDelete(req.params.postId);
     res.json({ message: 'Post deleted' });
