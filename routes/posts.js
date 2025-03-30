@@ -107,7 +107,7 @@ router.get('/posts/:postId', async (req, res) => {
  * }
  */
 //PUT Update
-router.put('/posts/:postId', validateCreatePost, async (req, res) => {
+router.put('/posts/:postId', validateUpdatePost, async (req, res) => {
   try {
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.postId,
