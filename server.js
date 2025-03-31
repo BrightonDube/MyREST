@@ -6,6 +6,7 @@ import postRoutes from './routes/posts.js';
 import commentRoutes from './routes/comments.js';
 import authRoutes from './routes/authRoutes.js'; // Import auth routes
 import swaggerUi from 'swagger-ui-express';
+import cors from 'cors';
 import { createRequire } from 'module';
 import { config } from 'dotenv';
 import passport from './routes/auth.js'; // Import passport config
@@ -25,12 +26,13 @@ const __dirname = path.dirname(__filename);
 dbConnection; // Database connection
 
 // Session middleware
+app.use(cors());
 app.use(
-    session({
-        secret: process.env.SESSION_SECRET || 'secret-key', 
-        resave: false,
-        saveUninitialized: true
-    })
+  session({
+    secret: process.env.SESSION_SECRET || 'secret-key',
+    resave: false,
+    saveUninitialized: true
+  })
 );
 
 // Passport middleware
@@ -50,9 +52,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Serve frontend (index.html) - public route
 app.get('/', (req, res) => {
-    res.sendFile('index.html', { root: path.join(__dirname, 'public') });
+  res.sendFile('index.html', { root: path.join(__dirname, 'public') });
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
