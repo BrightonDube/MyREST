@@ -5,7 +5,7 @@
     "description": "Documentation for my Express Post API with validation using express-validator",
     "version": "1.0.0"
   },
-  "host": "myrest.onrender.com",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {
@@ -17,7 +17,9 @@
       "description": "Operations related to comments on blog posts"
     }
   ],
-  "schemes": ["https"],
+  "schemes": [
+    "http"
+  ],
   "paths": {
     "/posts/": {
       "get": {
@@ -235,24 +237,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "text": {
-                  "type": "string",
-                  "example": "Updated comment text"
-                },
-                "author": {
-                  "type": "string",
-                  "example": "Updated author name"
-                }
-              }
-            }
           }
         ],
         "responses": {

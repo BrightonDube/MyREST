@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 import Post from '../models/Post.js';
 import { validateCreatePost, validateUpdatePost } from '../middleware/postValidations.js';
+import isLoggedIn from '../middleware/isLoggedIn.js';
 
 //All posts
 /**
@@ -27,6 +28,7 @@ router.get('/posts/', async (req, res) => {
  * @param {PostInput} request.body.required - Post object to be created
  * @return {Post} 200 - Success response - application/json
  * @return {object} 400 - Validation error - application/json
+ * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  * @example request - example payload
  * {
@@ -45,16 +47,16 @@ router.get('/posts/', async (req, res) => {
  * }
  */
 // save some posts
-router.post('/posts/', validateCreatePost, async (req, res) => {
+router.post('/posts/', isLoggedIn, validateCreatePost, async (req, res) => { // Apply isLoggedIn here
   const post = new Post({
-    title: req.body.title,
-    description: req.body.description
+      title: req.body.title,
+      description: req.body.description
   });
   try {
-    const savedPost = await post.save();
-    res.json(savedPost);
+      const savedPost = await post.save();
+      res.json(savedPost);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+      res.status(500).json({ message: err.message });
   }
 });
 
@@ -75,15 +77,16 @@ router.get('/posts/:postId', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
 /**
  * PUT /posts/{postId}
  * @tags Posts
- * @summary Update an existing post (PUT - full replacement)
+ * @summary Update an existing post (PUT - full replacement - protected - login required)
+ * @security BearerAuth
  * @param {string} postId.path.required - ID of the post to update
  * @param {PostInput} request.body.required - Post object for full replacement
  * @return {Post} 200 - Success response - application/json
  * @return {object} 400 - Validation error - application/json
+ * @return {object} 401 - Unauthorized - Login required
  * @return {object} 404 - Not found error - application/json
  * @return {object} 500 - Error response
  * @example request - example payload
@@ -106,40 +109,41 @@ router.get('/posts/:postId', async (req, res) => {
  *   "message": "Post not found"
  * }
  */
-//PUT Update
-router.put('/posts/:postId', validateUpdatePost, async (req, res) => {
+router.put('/posts/:postId', isLoggedIn, validateUpdatePost, async (req, res) => { // Apply isLoggedIn
   try {
-    const updatedPost = await Post.findByIdAndUpdate(
-      req.params.postId,
-      {
-        title: req.body.title,
-        description: req.body.description
-      },
-      { new: true, overwrite: true }
-    );
-    if (!updatedPost) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-    res.json(updatedPost);
+      const updatedPost = await Post.findByIdAndUpdate(
+          req.params.postId,
+          {
+              title: req.body.title,
+              description: req.body.description
+          },
+          { new: true, overwrite: true }
+      );
+      if (!updatedPost) {
+          return res.status(404).json({ message: 'Post not found' });
+      }
+      res.json(updatedPost);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+      res.status(500).json({ message: err.message });
   }
 });
 
 /**
  * DELETE /posts/{postId}
  * @tags Posts
- * @summary Delete a post by ID
+ * @summary Delete a post by ID (protected - login required)
+ * @security BearAuth
  * @param {string} postId.path.required - ID of the post to delete
  * @return {object} 200 - Success response
+ * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  */
-router.delete('/posts/:postId', async (req, res) => {
+router.delete('/posts/:postId', isLoggedIn, async (req, res) => { // Apply isLoggedIn
   try {
-    await Post.findByIdAndDelete(req.params.postId);
-    res.json({ message: 'Post deleted' });
+      await Post.findByIdAndDelete(req.params.postId);
+      res.json({ message: 'Post deleted' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+      res.status(500).json({ message: err.message });
   }
 });
 
