@@ -20,24 +20,25 @@ import isLoggedIn from '../middleware/isLoggedIn.js'; // Import isLoggedIn
  * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  */
-router.post('/comments/post/:postId', isLoggedIn, validateCreateComment, async (req, res) => { // Apply isLoggedIn
-    try {
-        const postExists = await Post.findById(req.params.postId);
-        if (!postExists) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-
-        const comment = new Comment({
-            text: req.body.text,
-            author: req.body.author,
-            postId: req.params.postId
-        });
-
-        const savedComment = await comment.save();
-        res.status(201).json(savedComment);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+router.post('/post/:postId', isLoggedIn, validateCreateComment, async (req, res) => {
+  // Apply isLoggedIn
+  try {
+    const postExists = await Post.findById(req.params.postId);
+    if (!postExists) {
+      return res.status(404).json({ message: 'Post not found' });
     }
+
+    const comment = new Comment({
+      text: req.body.text,
+      author: req.body.author,
+      postId: req.params.postId
+    });
+
+    const savedComment = await comment.save();
+    res.status(201).json(savedComment);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 /**
@@ -48,13 +49,13 @@ router.post('/comments/post/:postId', isLoggedIn, validateCreateComment, async (
  * @return {array<object>} 200 - Success response - application/json
  * @return {object} 500 - Error response
  */
-router.get('/comments/post/:postId', async (req, res) => {
-    try {
-        const comments = await Comment.find({ postId: req.params.postId });
-        res.json(comments);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+router.get('/post/:postId', async (req, res) => {
+  try {
+    const comments = await Comment.find({ postId: req.params.postId });
+    res.json(comments);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 /**
@@ -66,19 +67,19 @@ router.get('/comments/post/:postId', async (req, res) => {
  * @return {object} 404 - Not found error - application/json
  * @return {object} 500 - Error response
  */
-router.get('/comments/comment/:commentId', async (req, res) => {
-    try {
-        const comment = await Comment.findById(req.params.commentId);
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
-        res.json(comment);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+router.get('/comment/:commentId', async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
     }
+    res.json(comment);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 /**
- * PUT /comments/comment/{commentId}
+ * PUT /comment/{commentId}
  * @tags Comments
  * @summary Update an existing comment (full replacement - protected - login required)
  * @security BearerAuth
@@ -90,29 +91,30 @@ router.get('/comments/comment/:commentId', async (req, res) => {
  * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  */
-router.put('/comments/comment/:commentId', isLoggedIn, validateUpdateComment, async (req, res) => { // Apply isLoggedIn
-    try {
-        const updatedComment = await Comment.findByIdAndUpdate(req.params.commentId, req.body, {
-            new: true,
-            overwrite: true, // Ensure full replacement
-            runValidators: true
-        });
+router.put('/comment/:commentId', isLoggedIn, validateUpdateComment, async (req, res) => {
+  // Apply isLoggedIn
+  try {
+    const updatedComment = await Comment.findByIdAndUpdate(req.params.commentId, req.body, {
+      new: true,
+      overwrite: true, // Ensure full replacement
+      runValidators: true
+    });
 
-        if (!updatedComment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
-
-        res.json(updatedComment);
-    } catch (err) {
-        if (err.name === 'ValidationError') {
-            return res.status(400).json({ errors: err.errors });
-        }
-        res.status(500).json({ message: err.message });
+    if (!updatedComment) {
+      return res.status(404).json({ message: 'Comment not found' });
     }
+
+    res.json(updatedComment);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ errors: err.errors });
+    }
+    res.status(500).json({ message: err.message });
+  }
 });
 
 /**
- * DELETE /comments/comment/{commentId}
+ * DELETE /comment/{commentId}
  * @tags Comments
  * @summary Delete a comment by ID (protected - login required)
  * @security BearerAuth
@@ -122,16 +124,17 @@ router.put('/comments/comment/:commentId', isLoggedIn, validateUpdateComment, as
  * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  */
-router.delete('/comments/comment/:commentId', isLoggedIn, async (req, res) => { // Apply isLoggedIn
-    try {
-        const deletedComment = await Comment.findByIdAndDelete(req.params.commentId);
-        if (!deletedComment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
-        res.json({ message: 'Comment deleted' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+router.delete('/comment/:commentId', isLoggedIn, async (req, res) => {
+  // Apply isLoggedIn
+  try {
+    const deletedComment = await Comment.findByIdAndDelete(req.params.commentId);
+    if (!deletedComment) {
+      return res.status(404).json({ message: 'Comment not found' });
     }
+    res.json({ message: 'Comment deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 export default router;

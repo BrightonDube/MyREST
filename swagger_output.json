@@ -2,10 +2,10 @@
   "swagger": "2.0",
   "info": {
     "title": "My Post API Documentation",
-    "description": "Documentation for my Express Post API with validation using express-validator",
+    "description": "Documentation for my Express Post API with Google OAuth Authentication",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "myrest.render.com",
   "basePath": "/",
   "tags": [
     {
@@ -15,264 +15,540 @@
     {
       "name": "Comments",
       "description": "Operations related to comments on blog posts"
+    },
+    {
+      "name": "Authentication",
+      "description": "Google OAuth Authentication Routes"
+    },
+    {
+      "name": "General",
+      "description": "General API information"
     }
   ],
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["https"],
   "paths": {
+    "/auth/google": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Redirects user to Google OAuth login page",
+        "description": "Initiates the Google OAuth 2.0 login flow.",
+        "responses": {
+          "302": {
+            "description": "Redirect to Google login page"
+          }
+        }
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Google OAuth callback route",
+        "description": "Handles the callback from Google after authentication.",
+        "responses": {
+          "302": {
+            "description": "Redirect to dashboard on success, homepage on failure"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Logs out the user",
+        "description": "Logs the user out and redirects to the homepage.",
+        "responses": {
+          "302": {
+            "description": "Redirect to homepage after logout"
+          }
+        }
+      }
+    },
     "/posts/": {
       "get": {
-        "description": "",
+        "tags": ["Posts"],
+        "summary": "Get all posts (publicly accessible)",
+        "description": "Retrieves a list of all blog posts.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful retrieval of posts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Post"
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
       "post": {
-        "description": "",
+        "tags": ["Posts"],
+        "summary": "Create a new post (protected - login required)",
+        "description": "Creates a new blog post. Requires user authentication.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "any"
-                },
-                "description": {
-                  "example": "any"
-                }
-              }
-            }
+              "$ref": "#/definitions/PostInput"
+            },
+            "required": true,
+            "description": "Post object to be created"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Post created successfully",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Validation error",
+            "schema": {
+              "$ref": "#/definitions/ValidationError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Login required",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
     },
     "/posts/{postId}": {
       "get": {
-        "description": "",
+        "tags": ["Posts"],
+        "summary": "Get a specific post by ID (publicly accessible)",
+        "description": "Retrieves a single blog post by its ID.",
         "parameters": [
           {
             "name": "postId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the post to fetch"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful retrieval of post",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
       "put": {
-        "description": "",
+        "tags": ["Posts"],
+        "summary": "Update an existing post (protected - login required)",
+        "description": "Updates an existing blog post. Requires user authentication.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "postId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the post to update"
           },
           {
             "name": "body",
             "in": "body",
             "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "any"
-                },
-                "description": {
-                  "example": "any"
-                }
-              }
-            }
+              "$ref": "#/definitions/PostUpdateInput"
+            },
+            "required": true,
+            "description": "Post object for update"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Post updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Validation error",
+            "schema": {
+              "$ref": "#/definitions/ValidationError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Login required",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not found error",
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Posts"],
+        "summary": "Delete a post by ID (protected - login required)",
+        "description": "Deletes a blog post by its ID. Requires user authentication.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "postId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the post to delete"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Post deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized - Login required",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
     },
     "/comments/post/{postId}": {
       "post": {
-        "description": "",
+        "tags": ["Comments"],
+        "summary": "Create a new comment for a specific post (protected - login required)",
+        "description": "Creates a new comment for a blog post. Requires user authentication.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "postId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the post to comment on"
           },
           {
             "name": "body",
             "in": "body",
             "schema": {
-              "type": "object",
-              "properties": {
-                "text": {
-                  "example": "any"
-                },
-                "author": {
-                  "example": "any"
-                }
-              }
-            }
+              "$ref": "#/definitions/CommentInput"
+            },
+            "required": true,
+            "description": "Comment object to be created"
           }
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Comment created successfully",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Validation error",
+            "schema": {
+              "$ref": "#/definitions/ValidationError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Login required",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Post not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
       "get": {
-        "description": "",
+        "tags": ["Comments"],
+        "summary": "Get all comments for a specific post (publicly accessible)",
+        "description": "Retrieves all comments associated with a given blog post ID.",
         "parameters": [
           {
             "name": "postId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the post to retrieve comments for"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful retrieval of comments",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Comment"
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
     },
     "/comments/comment/{commentId}": {
       "get": {
-        "description": "",
+        "tags": ["Comments"],
+        "summary": "Get a specific comment by ID (publicly accessible)",
+        "description": "Retrieves a single comment by its ID.",
         "parameters": [
           {
             "name": "commentId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the comment to fetch"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful retrieval of comment",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not found error",
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
       "put": {
-        "description": "",
+        "tags": ["Comments"],
+        "summary": "Update an existing comment (protected - login required)",
+        "description": "Updates an existing comment. Requires user authentication.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "commentId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the comment to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CommentUpdateInput"
+            },
+            "description": "Updated comment data"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Comment updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Validation error",
+            "schema": {
+              "$ref": "#/definitions/ValidationError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Login required",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not found error",
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Comments"],
+        "summary": "Delete a comment by ID (protected - login required)",
+        "description": "Deletes a comment by its ID. Requires user authentication.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "commentId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the comment to delete"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Comment deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized - Login required",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not found error",
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Redirects to Google OAuth login page",
+        "description": "Initiates the Google OAuth 2.0 login flow.",
+        "responses": {
+          "302": {
+            "description": "Redirect to Google login page"
+          }
+        }
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Google OAuth callback route",
+        "description": "Handles the callback from Google after authentication.",
+        "responses": {
+          "302": {
+            "description": "Redirect to dashboard on success, homepage on failure"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Logs out the user",
+        "description": "Logs the user out and redirects to the homepage.",
+        "responses": {
+          "302": {
+            "description": "Redirect to homepage after logout"
+          }
+        }
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Get Dashboard information (requires login)",
+        "description": "Provides a welcome message and user information if logged in.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/DashboardResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Login required",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -281,14 +557,17 @@
   "definitions": {
     "PostInput": {
       "type": "object",
+      "required": ["title", "description"],
       "properties": {
         "title": {
           "type": "string",
-          "example": "Example Post Title"
+          "example": "Example Post Title",
+          "description": "Title of the post"
         },
         "description": {
           "type": "string",
-          "example": "Example post description"
+          "example": "Example post description",
+          "description": "Description of the post"
         }
       }
     },
@@ -297,11 +576,13 @@
       "properties": {
         "title": {
           "type": "string",
-          "example": "Updated Title (optional)"
+          "example": "Updated Title (optional)",
+          "description": "Updated title of the post (optional)"
         },
         "description": {
           "type": "string",
-          "example": "Updated description (optional)"
+          "example": "Updated description (optional)",
+          "description": "Updated description of the post (optional)"
         }
       }
     },
@@ -310,36 +591,49 @@
       "properties": {
         "_id": {
           "type": "string",
-          "example": "65f..."
+          "example": "65f...",
+          "description": "Post ID (MongoDB ObjectId)"
         },
         "title": {
           "type": "string",
-          "example": "Post Title"
+          "example": "Post Title",
+          "description": "Title of the post"
         },
         "description": {
           "type": "string",
-          "example": "Post Description"
+          "example": "Post Description",
+          "description": "Description of the post"
         },
         "date": {
           "type": "string",
-          "example": "2024-03-15T12:00:00.000Z"
+          "example": "2024-03-15T12:00:00.000Z",
+          "description": "Date of post creation (ISO 8601 format)"
         },
         "__v": {
           "type": "number",
-          "example": 0
+          "example": 0,
+          "description": "Version key (MongoDB)"
         }
       }
     },
     "CommentInput": {
       "type": "object",
+      "required": ["text", "author", "postId"],
       "properties": {
         "text": {
           "type": "string",
-          "example": "This is a comment text"
+          "example": "This is a comment text",
+          "description": "Content of the comment"
         },
         "author": {
           "type": "string",
-          "example": "Comment Author Name"
+          "example": "Comment Author Name",
+          "description": "Name of the comment author"
+        },
+        "postId": {
+          "type": "string",
+          "example": "65f...",
+          "description": "ID of the post this comment belongs to"
         }
       }
     },
@@ -348,11 +642,13 @@
       "properties": {
         "text": {
           "type": "string",
-          "example": "Updated comment text (optional)"
+          "example": "Updated comment text (optional)",
+          "description": "Updated content of the comment (optional)"
         },
         "author": {
           "type": "string",
-          "example": "Updated Author Name (optional)"
+          "example": "Updated Author Name (optional)",
+          "description": "Updated name of the comment author (optional)"
         }
       }
     },
@@ -361,23 +657,28 @@
       "properties": {
         "_id": {
           "type": "string",
-          "example": "660..."
+          "example": "660...",
+          "description": "Comment ID (MongoDB ObjectId)"
         },
         "text": {
           "type": "string",
-          "example": "Comment Text"
+          "example": "Comment Text",
+          "description": "Content of the comment"
         },
         "author": {
           "type": "string",
-          "example": "Author Name"
+          "example": "Author Name",
+          "description": "Name of the comment author"
         },
         "postId": {
           "type": "string",
-          "example": "65f..."
+          "example": "65f...",
+          "description": "ID of the associated post (MongoDB ObjectId)"
         },
         "date": {
           "type": "string",
-          "example": "2024-03-22T10:00:00.000Z"
+          "example": "2024-03-22T10:00:00.000Z",
+          "description": "Date of comment creation (ISO 8601 format)"
         }
       }
     },
@@ -386,7 +687,8 @@
       "properties": {
         "message": {
           "type": "string",
-          "example": "Error message string"
+          "example": "Error message string",
+          "description": "Generic error message"
         }
       }
     },
@@ -400,18 +702,22 @@
             "properties": {
               "msg": {
                 "type": "string",
-                "example": "Validation error message"
+                "example": "Validation error message",
+                "description": "Specific validation error message"
               },
               "param": {
                 "type": "string",
-                "example": "fieldName"
+                "example": "fieldName",
+                "description": "Field that caused the validation error"
               },
               "location": {
                 "type": "string",
-                "example": "body"
+                "example": "body",
+                "description": "Location of the error (body, query, path)"
               }
             }
-          }
+          },
+          "description": "Array of validation error objects"
         }
       }
     },
@@ -420,7 +726,53 @@
       "properties": {
         "message": {
           "type": "string",
-          "example": "Resource not found"
+          "example": "Resource not found",
+          "description": "Message indicating resource not found"
+        }
+      }
+    },
+    "DashboardResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Welcome to the API",
+          "description": "Welcome message from the API"
+        },
+        "user": {
+          "type": "object",
+          "description": "User profile object from Google OAuth",
+          "properties": {
+            "displayName": {
+              "type": "string",
+              "example": "John Doe",
+              "description": "User's display name"
+            },
+            "email": {
+              "type": "string",
+              "example": "john.doe@example.com",
+              "description": "User's email address"
+            },
+            "googleId": {
+              "type": "string",
+              "example": "1234567890",
+              "description": "User's Google ID"
+            },
+            "photos": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "example": "https://example.com/profile.jpg",
+                    "description": "URL of user's profile photo"
+                  }
+                }
+              },
+              "description": "Array of user's profile photos"
+            }
+          }
         }
       }
     }

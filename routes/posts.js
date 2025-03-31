@@ -12,7 +12,7 @@ import isLoggedIn from '../middleware/isLoggedIn.js';
  * @return {array<Post>} 200 - Success response - application/json
  * @return {object} 500 - Error response
  */
-router.get('/posts/', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
     res.json(posts);
@@ -47,16 +47,17 @@ router.get('/posts/', async (req, res) => {
  * }
  */
 // save some posts
-router.post('/posts/', isLoggedIn, validateCreatePost, async (req, res) => { // Apply isLoggedIn here
+router.post('/', isLoggedIn, validateCreatePost, async (req, res) => {
+  // Apply isLoggedIn here
   const post = new Post({
-      title: req.body.title,
-      description: req.body.description
+    title: req.body.title,
+    description: req.body.description
   });
   try {
-      const savedPost = await post.save();
-      res.json(savedPost);
+    const savedPost = await post.save();
+    res.json(savedPost);
   } catch (err) {
-      res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -69,7 +70,7 @@ router.post('/posts/', isLoggedIn, validateCreatePost, async (req, res) => { // 
  * @return {object} 500 - Error response
  */
 // get a specific post
-router.get('/posts/:postId', async (req, res) => {
+router.get('/:postId', async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
     res.send(post);
@@ -109,22 +110,23 @@ router.get('/posts/:postId', async (req, res) => {
  *   "message": "Post not found"
  * }
  */
-router.put('/posts/:postId', isLoggedIn, validateUpdatePost, async (req, res) => { // Apply isLoggedIn
+router.put('/:postId', isLoggedIn, validateUpdatePost, async (req, res) => {
+  // Apply isLoggedIn
   try {
-      const updatedPost = await Post.findByIdAndUpdate(
-          req.params.postId,
-          {
-              title: req.body.title,
-              description: req.body.description
-          },
-          { new: true, overwrite: true }
-      );
-      if (!updatedPost) {
-          return res.status(404).json({ message: 'Post not found' });
-      }
-      res.json(updatedPost);
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.postId,
+      {
+        title: req.body.title,
+        description: req.body.description
+      },
+      { new: true, overwrite: true }
+    );
+    if (!updatedPost) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    res.json(updatedPost);
   } catch (err) {
-      res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -138,12 +140,13 @@ router.put('/posts/:postId', isLoggedIn, validateUpdatePost, async (req, res) =>
  * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  */
-router.delete('/posts/:postId', isLoggedIn, async (req, res) => { // Apply isLoggedIn
+router.delete('/:postId', isLoggedIn, async (req, res) => {
+  // Apply isLoggedIn
   try {
-      await Post.findByIdAndDelete(req.params.postId);
-      res.json({ message: 'Post deleted' });
+    await Post.findByIdAndDelete(req.params.postId);
+    res.json({ message: 'Post deleted' });
   } catch (err) {
-      res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 

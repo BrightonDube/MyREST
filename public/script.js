@@ -12,12 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
         logoutButton.style.display = 'none';
         loginButton.style.display = 'inline-block';
         userInfoDisplay.textContent = "Logged out";
-        // Refresh Swagger UI or clear authorization if needed
-        window.location.reload(); // Simple reload to clear Swagger UI auth for now
+        window.location.reload(); 
     });
 
     function checkLoginStatus() {
-        fetch('/dashboard') //  A public route to check login status in backend
+        fetch('/api-docs')
             .then(response => {
                 if (response.ok) {
                     return response.json();

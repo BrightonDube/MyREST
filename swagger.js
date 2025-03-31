@@ -2,15 +2,16 @@
 import swaggerAutogen from 'swagger-autogen';
 
 const outputFile = './swagger_output.json';
-const endpointsFiles = ['./routes/posts.js', './routes/comments.js'];
+// ✅ Include authRoutes.js in endpointsFiles to document authentication routes
+const endpointsFiles = ['./routes/posts.js', './routes/comments.js', './routes/authRoutes.js'];
 
 const doc = {
   info: {
     title: 'My Post API Documentation',
-    description: 'Documentation for my Express Post API with validation using express-validator'
+    description: 'Documentation for my Express Post API with Google OAuth Authentication' // ✅ Updated description to mention OAuth
   },
-  host: 'localhost:3000',
-  schemes: ['http'],
+  host: 'localhost:3000', // Adjust for your deployment if needed
+  schemes: ['http'], // or ['https'] for production
   tags: [
     {
       name: 'Posts',
@@ -19,8 +20,24 @@ const doc = {
     {
       name: 'Comments',
       description: 'Operations related to comments on blog posts'
+    },
+    {
+      name: 'Authentication', // ✅ Added Authentication Tag
+      description: 'Google OAuth Authentication Routes'
+    },
+     {
+      name: 'General', // Added General tag for dashboard route
+      description: 'General API information'
     }
   ],
+  securityDefinitions: { // ✅ Added securityDefinitions for BearerAuth
+    BearerAuth: {
+      type: 'apiKey',
+      in: 'header',
+      name: 'Authorization',
+      description: 'Enter your Bearer token (session-based authentication)' // Adjusted description for session-based auth
+    }
+  },
   definitions: {
     PostInput: {
       title: 'Example Post Title',
@@ -38,21 +55,18 @@ const doc = {
       __v: 0
     },
     CommentInput: {
-      // New CommentInput definition
       text: 'This is a comment text',
       author: 'Comment Author Name'
     },
     CommentUpdateInput: {
-      // Optional CommentUpdateInput
       text: 'Updated comment text (optional)',
       author: 'Updated Author Name (optional)'
     },
     Comment: {
-      // New Comment definition
       _id: '660...',
       text: 'Comment Text',
       author: 'Author Name',
-      postId: '65f...', // Example postId
+      postId: '65f...',
       date: '2024-03-22T10:00:00.000Z'
     },
     Error: {
@@ -69,8 +83,16 @@ const doc = {
     },
     NotFoundError: {
       message: 'Resource not found'
-    }
-  }
+    },
+     DashboardResponse: { // Added definition for dashboard response
+        message: 'Welcome to the API',
+        user: {
+          type: 'object', // Adjust based on your actual user profile structure
+          description: 'User profile object from Google OAuth'
+        }
+      }
+  },
+   security: [], // You can set default security for the entire API here if needed, otherwise apply at route level
 };
 
 swaggerAutogen(outputFile, endpointsFiles, doc);
