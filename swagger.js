@@ -2,16 +2,16 @@
 import swaggerAutogen from 'swagger-autogen';
 
 const outputFile = './swagger_output.json';
-// ✅ Include authRoutes.js in endpointsFiles to document authentication routes
+
 const endpointsFiles = ['./routes/posts.js', './routes/comments.js', './routes/authRoutes.js'];
 
 const doc = {
   info: {
     title: 'My Post API Documentation',
-    description: 'Documentation for my Express Post API with Google OAuth Authentication' // ✅ Updated description to mention OAuth
+    description: 'Documentation for my Express Post API with Google OAuth Authentication' 
   },
-  host: 'localhost:3000', // Adjust for your deployment if needed
-  schemes: ['http'], // or ['https'] for production
+  host: 'myrest.onrender.com', 
+  schemes: ['https'], 
   tags: [
     {
       name: 'Posts',
@@ -22,20 +22,20 @@ const doc = {
       description: 'Operations related to comments on blog posts'
     },
     {
-      name: 'Authentication', // ✅ Added Authentication Tag
+      name: 'Authentication', 
       description: 'Google OAuth Authentication Routes'
     },
      {
-      name: 'General', // Added General tag for dashboard route
+      name: 'General', 
       description: 'General API information'
     }
   ],
-  securityDefinitions: { // ✅ Added securityDefinitions for BearerAuth
+  securityDefinitions: {
     BearerAuth: {
       type: 'apiKey',
       in: 'header',
       name: 'Authorization',
-      description: 'Enter your Bearer token (session-based authentication)' // Adjusted description for session-based auth
+      description: 'Enter your Bearer token (session-based authentication)' 
     }
   },
   definitions: {
@@ -84,15 +84,15 @@ const doc = {
     NotFoundError: {
       message: 'Resource not found'
     },
-     DashboardResponse: { // Added definition for dashboard response
+     DashboardResponse: { 
         message: 'Welcome to the API',
         user: {
-          type: 'object', // Adjust based on your actual user profile structure
+          type: 'object', 
           description: 'User profile object from Google OAuth'
         }
       }
   },
-   security: [], // You can set default security for the entire API here if needed, otherwise apply at route level
+   security: [], 
 };
 
 swaggerAutogen(outputFile, endpointsFiles, doc);

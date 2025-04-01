@@ -25,15 +25,8 @@ const port = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const store = new MongoDBStoreSession({
-  uri: process.env.MONGODB_URI, // Your MongoDB connection URI (from environment variable)
-  collection: 'sessions' // Collection to store sessions in MongoDB
-  // Optional:
-  // expires: 1000 * 60 * 60 * 24 * 7, // Session expiration (e.g., 7 days) - in milliseconds
-  // connectionOptions: { // Optional options for the MongoDB connection
-  //   useNewUrlParser: true,   //  No longer needed in newer MongoDB drivers but kept for example
-  //   useUnifiedTopology: true, //  No longer needed in newer MongoDB drivers but kept for example
-  //   serverSelectionTimeoutMS: 10000,
-  // },
+  uri: process.env.CONNECTION_STRING, 
+  collection: 'sessions' 
 });
 
 // Catch errors
@@ -45,17 +38,17 @@ dbConnection; // Database connection
 
 // Session middleware
 app.use(cors({
-    origin: '*', // Allow requests from ANY origin (for testing ONLY)
+    origin: '*', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: '*', // Allow ANY headers (for testing ONLY)
-    credentials: true // If you need credentials (cookies, auth headers)
+    allowedHeaders: '*', 
+    credentials: true 
 }));
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'secret-key',
     resave: false,
     saveUninitialized: true,
-    store: store, // Use the MongoDB store here
+    store: store, 
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
