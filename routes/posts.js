@@ -2,7 +2,6 @@ import express from 'express';
 const router = express.Router();
 import Post from '../models/Post.js';
 import { validateCreatePost, validateUpdatePost } from '../middleware/postValidations.js';
-import isLoggedIn from '../middleware/isLoggedIn.js';
 
 //All posts
 /**
@@ -47,8 +46,7 @@ router.get('/', async (req, res) => {
  * }
  */
 // save some posts
-router.post('/', isLoggedIn, validateCreatePost, async (req, res) => {
-  // Apply isLoggedIn here
+router.post('/', validateCreatePost, async (req, res) => {
   const post = new Post({
     title: req.body.title,
     description: req.body.description
@@ -110,8 +108,7 @@ router.get('/:postId', async (req, res) => {
  *   "message": "Post not found"
  * }
  */
-router.put('/:postId', isLoggedIn, validateUpdatePost, async (req, res) => {
-  // Apply isLoggedIn
+router.put('/:postId', validateUpdatePost, async (req, res) => {
   try {
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.postId,
@@ -140,8 +137,7 @@ router.put('/:postId', isLoggedIn, validateUpdatePost, async (req, res) => {
  * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  */
-router.delete('/:postId', isLoggedIn, async (req, res) => {
-  // Apply isLoggedIn
+router.delete('/:postId', async (req, res) => {
   try {
     await Post.findByIdAndDelete(req.params.postId);
     res.json({ message: 'Post deleted' });

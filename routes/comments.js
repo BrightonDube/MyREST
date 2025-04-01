@@ -3,7 +3,6 @@ const router = express.Router();
 import Comment from '../models/Comment.js';
 import Post from '../models/Post.js';
 import { validateCreateComment, validateUpdateComment } from '../middleware/commentValidations.js';
-import isLoggedIn from '../middleware/isLoggedIn.js'; // Import isLoggedIn
 
 /**
  * POST /comments/post/{postId}
@@ -20,8 +19,7 @@ import isLoggedIn from '../middleware/isLoggedIn.js'; // Import isLoggedIn
  * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  */
-router.post('/post/:postId', isLoggedIn, validateCreateComment, async (req, res) => {
-  // Apply isLoggedIn
+router.post('/post/:postId', validateCreateComment, async (req, res) => {
   try {
     const postExists = await Post.findById(req.params.postId);
     if (!postExists) {
@@ -91,8 +89,7 @@ router.get('/comment/:commentId', async (req, res) => {
  * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  */
-router.put('/comment/:commentId', isLoggedIn, validateUpdateComment, async (req, res) => {
-  // Apply isLoggedIn
+router.put('/comment/:commentId', validateUpdateComment, async (req, res) => {
   try {
     const updatedComment = await Comment.findByIdAndUpdate(req.params.commentId, req.body, {
       new: true,
@@ -124,8 +121,7 @@ router.put('/comment/:commentId', isLoggedIn, validateUpdateComment, async (req,
  * @return {object} 401 - Unauthorized - Login required
  * @return {object} 500 - Error response
  */
-router.delete('/comment/:commentId', isLoggedIn, async (req, res) => {
-  // Apply isLoggedIn
+router.delete('/comment/:commentId', async (req, res) => {
   try {
     const deletedComment = await Comment.findByIdAndDelete(req.params.commentId);
     if (!deletedComment) {
