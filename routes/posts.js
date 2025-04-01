@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 import Post from '../models/Post.js';
 import { validateCreatePost, validateUpdatePost } from '../middleware/postValidations.js';
+import isLoggedIn from '../middleware/isLoggedIn.js';
 
 //All posts
 /**
@@ -11,7 +12,7 @@ import { validateCreatePost, validateUpdatePost } from '../middleware/postValida
  * @return {array<Post>} 200 - Success response - application/json
  * @return {object} 500 - Error response
  */
-router.get('/', async (req, res) => {
+router.get('/', isLoggedIn, async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
     res.json(posts);
