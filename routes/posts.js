@@ -47,7 +47,7 @@ router.get('/', isLoggedIn, async (req, res) => {
  * }
  */
 // save some posts
-router.post('/', validateCreatePost, async (req, res) => {
+router.post('/',isLoggedIn, validateCreatePost, async (req, res) => {
   const post = new Post({
     title: req.body.title,
     description: req.body.description

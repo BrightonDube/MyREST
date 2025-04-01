@@ -3,12 +3,13 @@ import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import bodyParser from 'body-parser';
 import dbConnection from './data/index.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 import postRoutes from './routes/posts.js';
 import commentRoutes from './routes/comments.js';
-import authRoutes from './routes/authRoutes.js'; // Import auth routes
+import authRoutes from './routes/authRoutes.js'; 
 import cors from 'cors';
 import { config } from 'dotenv';
-import passport from './routes/auth.js'; // Import passport config
+import passport from './routes/auth.js'; 
 import path from 'path';
 import { fileURLToPath } from 'url';
 import protectedDocsRoute from './routes/protectedDocsRoute.js'
@@ -66,7 +67,8 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
-app.use('/auth', authRoutes); // Mount authentication routes at /auth
+app.use('/', dashboardRoutes);
+app.use('/auth', authRoutes); 
 app.use('/posts', postRoutes);
 app.use('/comments', commentRoutes);
 app.use('/', protectedDocsRoute);
