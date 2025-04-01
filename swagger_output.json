@@ -5,7 +5,7 @@
     "description": "Documentation for my Express Post API with Google OAuth Authentication",
     "version": "1.0.0"
   },
-  "host": "myrest.render.com",
+  "host": "myrest.onrender.com",
   "basePath": "/",
   "tags": [
     {
