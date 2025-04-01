@@ -30,8 +30,8 @@
     "/auth/google": {
       "get": {
         "tags": ["Authentication"],
-        "summary": "Redirects user to Google OAuth login page",
-        "description": "Initiates the Google OAuth 2.0 login flow.",
+        "summary": "Redirects user to Google OAuth login page [Not testable in Swagger UI]",
+        "description": "Initiates the Google OAuth 2.0 login flow. Must be accessed through a browser.",
         "responses": {
           "302": {
             "description": "Redirect to Google login page"

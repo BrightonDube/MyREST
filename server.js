@@ -38,11 +38,12 @@ dbConnection; // Database connection
 
 // Session middleware
 app.use(cors({
-    origin: '*', 
+    origin: ['https://myrest.onrender.com', 'https://petstore.swagger.io'], 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: '*', 
     credentials: true 
 }));
+app.options('*', cors());
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'secret-key',
