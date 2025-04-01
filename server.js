@@ -6,16 +6,14 @@ import dbConnection from './data/index.js';
 import postRoutes from './routes/posts.js';
 import commentRoutes from './routes/comments.js';
 import authRoutes from './routes/authRoutes.js'; // Import auth routes
-import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
-import { createRequire } from 'module';
 import { config } from 'dotenv';
 import passport from './routes/auth.js'; // Import passport config
 import path from 'path';
 import { fileURLToPath } from 'url';
+import protectedDocsRoute from './routes/protectedDocsRoute.js'
 
-const require = createRequire(import.meta.url);
-const swaggerDocument = require('./swagger_output.json');
+
 const MongoDBStoreSession = MongoDBStore(session);
 
 config();
@@ -71,7 +69,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auth', authRoutes); // Mount authentication routes at /auth
 app.use('/posts', postRoutes);
 app.use('/comments', commentRoutes);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/', protectedDocsRoute);
 
 // Serve frontend (index.html) - public route
 app.get('/', (req, res) => {
