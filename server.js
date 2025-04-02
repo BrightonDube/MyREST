@@ -8,6 +8,7 @@ import postRoutes from './routes/posts.js';
 import commentRoutes from './routes/comments.js';
 import authRoutes from './routes/authRoutes.js'; 
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
 import passport from './routes/auth.js'; 
 import path from 'path';
@@ -61,6 +62,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 

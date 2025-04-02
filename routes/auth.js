@@ -1,5 +1,7 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as GitHubStrategy } from 'passport-github';
 import dotenv from 'dotenv';
 import User from '../models/User.js';
 
@@ -28,7 +30,7 @@ passport.use(
         const newUser = new User({
           username: profile.displayName,
           googleId: profile.id,
-          email: profile.emails?.[0]?.value // Use optional chaining and check if emails array and value exist
+          email: profile.emails?.[0]?.value 
         });
 
         const savedUser = await newUser.save();
@@ -37,6 +39,79 @@ passport.use(
       } catch (error) {
         console.error('Error during Google authentication:', error);
         return done(error, null); // Pass error to done callback
+      }
+    }
+  )
+);
+// --- Facebook Strategy ---
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_CLIENT_ID, 
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET, 
+      callbackURL: process.env.FACEBOOK_CALLBACK_URL, 
+      profileFields: ['id', 'displayName', 'emails'], 
+      passReqToCallback: true,
+    },
+    async (req, accessToken, refreshToken, profile, done) => {
+      try {
+        // Check if user already exists with facebookId (you might want to add a facebookId field to your User model)
+        const existingUser = await User.findOne({ facebookId: profile.id });
+
+        if (existingUser) {
+          console.log('Facebook User already exists');
+          return done(null, existingUser);
+        }
+
+        // If user doesn't exist, create a new user
+        const newUser = new User({
+          username: profile.displayName,
+          googleId: profile.id, // Store Facebook ID
+          email: profile.emails?.[0]?.value,
+        });
+
+        const savedUser = await newUser.save();
+        console.log(`Facebook User saved: ${savedUser}`);
+        return done(null, savedUser);
+      } catch (error) {
+        console.error('Error during Facebook authentication:', error);
+        return done(error, null);
+      }
+    }
+  )
+);
+
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID, 
+      clientSecret: process.env.GITHUB_CLIENT_SECRET, 
+      callbackURL: process.env.GITHUB_CALLBACK_URL, 
+      passReqToCallback: true,
+      scope: ['user:email'], 
+    },
+    async (req, accessToken, refreshToken, profile, done) => {
+      try {
+        const existingUser = await User.findOne({ githubId: profile.id });
+
+        if (existingUser) {
+          console.log('GitHub User already exists');
+          return done(null, existingUser);
+        }
+
+        // If user doesn't exist, create a new user
+        const newUser = new User({
+          username: profile.displayName,
+          googleId: profile.id, // Store GitHub ID
+          email: profile.emails?.[0]?.value,
+        });
+
+        const savedUser = await newUser.save();
+        console.log(`GitHub User saved: ${savedUser}`);
+        return done(null, savedUser);
+      } catch (error) {
+        console.error('Error during GitHub authentication:', error);
+        return done(error, null);
       }
     }
   )
