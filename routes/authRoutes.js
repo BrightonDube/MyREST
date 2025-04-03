@@ -19,7 +19,49 @@ router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }), // Redirect on failure
   (req, res) => {
-    res.redirect('/api-docs'); // Redirect to dashboard on success
+    res.redirect('/dashboard'); // Redirect to dashboard on success
+  }
+);
+/**
+ * GET /auth/facebook
+ * @tags Authentication
+ * @summary Redirects user to Facebook OAuth login page
+ */
+router.get(
+  '/facebook',
+  passport.authenticate('facebook', { scope: ['public_profile', 'email'] })
+);
+
+/**
+ * GET /auth/facebook/callback
+ * @tags Authentication
+ * @summary Facebook OAuth callback route, handles authentication and redirects
+ */
+router.get(
+  '/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/' }), // Redirect on failure
+  (req, res) => {
+    res.redirect('/dashboard'); // Redirect to dashboard on success
+  }
+);
+
+/**
+ * GET /auth/github
+ * @tags Authentication
+ * @summary Redirects user to Github OAuth login page
+ */
+router.get('/github', passport.authenticate('github', { scope: ['profile', 'email'] }));
+
+/**
+ * GET /auth/github/callback
+ * @tags Authentication
+ * @summary Github OAuth callback route, handles authentication and redirects
+ */
+router.get(
+  '/github/callback',
+  passport.authenticate('github', { failureRedirect: '/' }), // Redirect on failure
+  (req, res) => {
+    res.redirect('/dashboard'); // Redirect to dashboard on success
   }
 );
 
