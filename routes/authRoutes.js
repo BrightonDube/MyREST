@@ -27,10 +27,7 @@ router.get(
  * @tags Authentication
  * @summary Redirects user to Facebook OAuth login page
  */
-router.get(
-  '/facebook',
-  passport.authenticate('facebook', { scope: ['public_profile', 'email'] })
-);
+router.get('/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
 
 /**
  * GET /auth/facebook/callback

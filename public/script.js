@@ -1,67 +1,72 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const loginButton = document.getElementById("login-button");
-    const logoutButton = document.getElementById("logout-button");
-    const userInfoDisplay = document.getElementById("user-info");
+document.addEventListener('DOMContentLoaded', function () {
+  const loginGoogleButton = document.getElementById('login-google-button');
+  const loginFacebookButton = document.getElementById('login-facebook-button');
+  const loginGithubButton = document.getElementById('login-github-button');
+  const logoutButton = document.getElementById('logout-button');
+  const userInfoDisplay = document.getElementById('user-info');
 
-    loginButton.addEventListener("click", () => {
-        window.location.href = "/auth/google"; // Redirect to backend Google OAuth route
-    });
+  const checkAuthStatus = () => {
+    fetch('/auth/status')
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.isAuthenticated) {
+          loginGoogleButton.style.display = 'none';
+          loginFacebookButton.style.display = 'none';
+          loginGithubButton.style.display = 'none';
+          logoutButton.style.display = 'block';
+          userInfoDisplay.textContent = `Logged in as: ${data.user.username || 'User'}`;
+        } else {
+          loginGoogleButton.style.display = 'block';
+          loginFacebookButton.style.display = 'block';
+          loginGithubButton.style.display = 'block';
+          logoutButton.style.display = 'none';
+          userInfoDisplay.textContent = 'Not logged in.';
+        }
+      })
+      .catch((error) => {
+        console.error('Error checking auth status:', error);
+        userInfoDisplay.textContent = 'Error checking login status.';
+      });
+  };
 
-    logoutButton.addEventListener("click", async () => {
-        await fetch("/auth/logout", { method: "GET" }); // Call backend logout route
-        logoutButton.style.display = 'none';
-        loginButton.style.display = 'inline-block';
-        userInfoDisplay.textContent = "Logged out";
-        window.location.reload(); 
-    });
+  checkAuthStatus();
 
-    function checkLoginStatus() {
-        fetch('/api-docs')
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else if (response.status === 401) {
-                    return null; // Not logged in
-                } else {
-                    throw new Error('Failed to check login status');
-                }
-            })
-            .then(data => {
-                if (data && data.user) {
-                    loginButton.style.display = 'none';
-                    logoutButton.style.display = 'inline-block';
-                    userInfoDisplay.textContent = `Logged in as: ${data.user.displayName || 'User'}`;
-                    loadSwaggerUI();
-                } else {
-                    loginButton.style.display = 'inline-block';
-                    logoutButton.style.display = 'none';
-                    userInfoDisplay.textContent = "Not logged in";
-                    loadSwaggerUI(); // Load Swagger UI in unauthenticated state
-                }
-            })
-            .catch(error => {
-                console.error("Error checking login status:", error);
-                userInfoDisplay.textContent = "Error checking login status.";
-                loadSwaggerUI(); // Load Swagger UI in default state on error
-            });
-    }
+  loginGoogleButton.addEventListener('click', () => {
+    window.location.href = '/auth/google';
+  });
 
-    function loadSwaggerUI() {
-        const ui = SwaggerUIBundle({
-            url: "/api-docs/swagger.json", // Path to your Swagger documentation
-            dom_id: '#swagger-ui',
-            presets: [
-                SwaggerUIBundle.presets.apis,
-                SwaggerUIBundle.SwaggerUIStandalonePreset
-            ],
-            plugins: [
-                SwaggerUIBundle.plugins.DownloadUrl
-            ],
-            layout: "StandaloneLayout",
-            // No requestInterceptor needed anymore as auth is handled by backend session
-        });
-        window.ui = ui;
-    }
+  // --- Facebook Login Button ---
+  loginFacebookButton.addEventListener('click', () => {
+    window.location.href = '/auth/facebook';
+  });
 
-    checkLoginStatus(); // Check login status on page load
+  loginGithubButton.addEventListener('click', () => {
+    window.location.href = '/auth/github';
+  });
+
+  logoutButton.addEventListener('click', () => {
+    fetch('/logout', { method: 'POST' })
+      .then((response) => {
+        if (response.ok) {
+          checkAuthStatus();
+          alert('Logged out successfully!');
+        } else {
+          console.error('Logout failed:', response.statusText);
+          alert('Logout failed. Please try again.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error during logout:', error);
+        alert('Logout error. Please try again.');
+      });
+  });
+
+  const ui = SwaggerUIBundle({
+    url: '/api-docs/swagger.json',
+    dom_id: '#swagger-ui',
+    deepLinking: true,
+    presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+    plugins: [SwaggerUIBundle.plugins.DownloadUrl]
+  });
+  window.ui = ui;
 });
