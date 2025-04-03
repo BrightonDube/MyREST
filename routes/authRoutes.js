@@ -39,6 +39,7 @@ router.get(
   passport.authenticate('facebook', { failureRedirect: '/' }), // Redirect on failure
   (req, res) => {
     res.redirect('/dashboard'); // Redirect to dashboard on success
+    console.log('Facebook OAuth URL:', oauthUrl);
   }
 );
 
