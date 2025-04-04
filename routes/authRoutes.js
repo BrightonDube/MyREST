@@ -17,9 +17,9 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
  */
 router.get(
   '/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }), // Redirect on failure
+  passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/'); // Redirect to dashboard on success
+    res.redirect('/'); // Redirect to homepage on success
   }
 );
 /**
@@ -36,9 +36,9 @@ router.get('/facebook', passport.authenticate('facebook', { scope: ['public_prof
  */
 router.get(
   '/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/' }), // Redirect on failure
+  passport.authenticate('facebook', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/dashboard'); // Redirect to dashboard on success
+    res.redirect('/'); // Fixed: Redirect to homepage on success - Consistent with Google
     console.log('Facebook OAuth URL:', oauthUrl);
   }
 );
@@ -57,9 +57,9 @@ router.get('/github', passport.authenticate('github', { scope: ['profile', 'emai
  */
 router.get(
   '/github/callback',
-  passport.authenticate('github', { failureRedirect: '/' }), // Redirect on failure
+  passport.authenticate('github', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/dashboard'); // Redirect to dashboard on success
+    res.redirect('/'); // Fixed: Redirect to homepage on success - Consistent with Google
   }
 );
 
@@ -72,7 +72,7 @@ router.get('/logout', (req, res) => {
   req.logout((err) => {
     if (err) {
       return next(err);
-    } // handles error during logout
+    }
     res.redirect('/'); // Redirect to homepage after logout
   });
 });
