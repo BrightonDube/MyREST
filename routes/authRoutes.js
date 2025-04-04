@@ -19,7 +19,7 @@ router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/api-docs'); // Redirect to homepage on success
+    res.redirect('/api-docs/'); // Redirect to homepage on success
   }
 );
 /**
