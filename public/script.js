@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Initialize Swagger UI
   const initSwaggerUI = () => {
     const ui = SwaggerUIBundle({
-      url: '/api-docs/swagger.json',
+      url: '/api-docs/swagger_output.json',
       dom_id: '#swagger-ui',
       deepLinking: true,
       presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
