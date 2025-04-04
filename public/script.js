@@ -1,3 +1,4 @@
+checkAuthStatus();
 document.addEventListener('DOMContentLoaded', function () {
   const loginGoogleButton = document.getElementById('login-google-button');
   const loginFacebookButton = document.getElementById('login-facebook-button');
