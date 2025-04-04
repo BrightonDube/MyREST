@@ -1,5 +1,7 @@
-checkAuthStatus();
-document.addEventListener('DOMContentLoaded', function () {
+checkAuthStatus(); // Run immediately on page load
+
+// Add this to ensure it runs after potential redirects
+window.addEventListener('load', checkAuthStatus);document.addEventListener('DOMContentLoaded', function () {
   const loginGoogleButton = document.getElementById('login-google-button');
   const loginFacebookButton = document.getElementById('login-facebook-button');
   const loginGithubButton = document.getElementById('login-github-button');
