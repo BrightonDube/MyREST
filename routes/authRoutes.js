@@ -19,7 +19,7 @@ router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/'); // Redirect to homepage on success
+    res.redirect('/api-docs'); // Redirect to homepage on success
   }
 );
 /**
@@ -38,7 +38,7 @@ router.get(
   '/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/'); // Fixed: Redirect to homepage on success - Consistent with Google
+    res.redirect('/api-docs'); // Fixed: Redirect to homepage on success - Consistent with Google
     console.log('Facebook OAuth URL:', oauthUrl);
   }
 );
@@ -59,7 +59,7 @@ router.get(
   '/github/callback',
   passport.authenticate('github', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/'); // Fixed: Redirect to homepage on success - Consistent with Google
+    res.redirect('/dashboard'); // Fixed: Redirect to homepage on success - Consistent with Google
   }
 );
 
